@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高雄出發 4 天自由行決策 Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #0284c7;
+            --primary-light: #e0f2fe;
+            --accent-green: #15803d;
+            --accent-green-bg: #f0fdf4;
+            --accent-red: #b91c1c;
+            --accent-red-bg: #fef2f2;
+            --accent-blue: #1d4ed8;
+            --accent-blue-bg: #eff6ff;
+            --tag-bg: #f1f5f9;
+            --tag-border: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px 16px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #0369a1;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .main-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background-color: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* City Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .city-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .city-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+            border-color: #38bdf8;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .city-title { font-size: 1.25rem; font-weight: 700; }
+
+        .flight-badge {
+            background-color: var(--primary-light);
+            color: #0369a1;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .soul-quote {
+            background-color: #f0f9ff;
+            color: #0369a1;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            line-height: 1.4;
+        }
+
+        .highlights {
+            background-color: #f8fafc;
+            border-left: 4px solid #0284c7;
+            padding: 10px;
+            margin-bottom: 14px;
+            font-size: 0.9rem;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .brand-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .tag {
+            background-color: var(--tag-bg);
+            color: #475569;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--tag-border);
+        }
+
+        .tag.has { background-color: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+        .tag.no { background-color: #f8fafc; color: #94a3b8; border-color: #e2e8f0; }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 6px 0;
+            border-top: 1px dashed var(--card-border);
+        }
+
+        .data-label { color: var(--text-muted); }
+        .data-value { font-weight: 600; color: var(--text-main); }
+
+        /* MODAL POPUP */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 16px;
+            max-width: 780px;
+            width: 100%;
+            max-height: 88vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            position: relative;
+            animation: modalUp 0.25s ease-out;
+            display: block;
+        }
+
+        @keyframes modalUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-close-btn {
+            position: sticky;
+            top: 12px;
+            float: right;
+            margin-right: 12px;
+            margin-top: 12px;
+            background: rgba(255,255,255,0.95);
+            border: none;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 30;
+            font-weight: bold;
+            color: #334155;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
+
+        .modal-gallery {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 4px;
+            height: 220px;
+            background: #cbd5e1;
+            width: 100%;
+            clear: both;
+        }
+
+        .gallery-main { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .gallery-sub-grid { display: grid; grid-template-rows: 1fr 1fr; gap: 4px; height: 100%; }
+        .gallery-sub { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .modal-body {
+            padding: 24px 28px;
+            background: #ffffff;
+            border-top: 2px solid var(--card-border);
+            clear: both;
+            position: relative;
+            z-index: 2;
+        }
+
+        .modal-title { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 16px; }
+        .modal-section { margin-top: 20px; }
+        .modal-section-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0284c7;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #e0f2fe;
+            padding-bottom: 4px;
+        }
+        .modal-text { font-size: 0.95rem; color: #334155; line-height: 1.65; }
+
+        /* Table & Gantt Chart Styling */
+        .gantt-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            overflow-x: auto;
+            margin-bottom: 28px;
+        }
+
+        .gantt-header-row {
+            display: flex;
+            border-bottom: 2px solid var(--card-border);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: #0369a1;
+            font-size: 0.9rem;
+            min-width: 650px;
+        }
+
+        .gantt-country-col { width: 160px; min-width: 160px; }
+        .gantt-months-wrapper { flex-grow: 1; display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; }
+
+        .gantt-track-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed var(--card-border);
+            min-width: 650px;
+        }
+
+        .gantt-country-name {
+            width: 160px; min-width: 160px;
+            font-weight: 700; font-size: 0.88rem; color: #334155;
+        }
+
+        .gantt-timeline-wrapper {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+            height: 36px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            padding: 3px;
+        }
+
+        .gantt-cell {
+            position: relative;
+            height: 100%;
+            border-right: 1px solid rgba(203, 213, 225, 0.4);
+            display: flex;
+            align-items: center;
+        }
+        .gantt-cell:last-child { border-right: none; }
+
+        .bar {
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 0 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bar-blue { background-color: #2563eb; }
+        .bar-red { background-color: #dc2626; }
+        .bar-green { background-color: #16a34a; }
+        .bar-yellow { background-color: #d97706; }
+
+        .section-sub-title { font-size: 1.3rem; font-weight: 700; color: #0369a1; margin-bottom: 14px; }
+
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .month-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .month-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #0284c7;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 6px;
+        }
+
+        .event-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .event-blue { background-color: var(--accent-blue-bg); border-left: 4px solid var(--accent-blue); color: #1e40af; }
+        .event-red { background-color: var(--accent-red-bg); border-left: 4px solid var(--accent-red); color: #991b1b; }
+        .event-green { background-color: var(--accent-green-bg); border-left: 4px solid var(--accent-green); color: #166534; }
+        .event-yellow { background-color: #fefce8; border-left: 4px solid #ca8a04; color: #854d0e; }
+
+        /* Mobile Optimization */
+        @media (max-width: 640px) {
+            h1 { font-size: 1.4rem; }
+            .main-tabs { gap: 6px; }
+            .tab-btn { padding: 8px 12px; font-size: 0.85rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .modal-gallery { height: 160px; }
+            .modal-body { padding: 18px; }
+            .modal-title { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>高雄出發 (KHH) 4 天自由行決策 Dashboard</h1>
+        <div class="subtitle">目標：預算親民、不玩水、美食/購物/電器採購、避開大雷點</div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <div class="main-tabs">
+        <button class="tab-btn active" onclick="switchTab('citiesTab', this)">🏢 城市心動比較</button>
+        <button class="tab-btn" onclick="switchTab('nationalTab', this)">🌍 國家共通規範</button>
+        <button class="tab-btn" onclick="switchTab('calendarTab', this)">🗓️ 行事曆與避雷指南</button>
+    </div>
+
+    <!-- TAB 1: 城市心動點比較 -->
+    <div id="citiesTab" class="tab-content active">
+        <div class="cards-grid">
+            
+            <!-- 沖繩 -->
+            <div class="city-card" onclick="openModal('okinawa')">
+                <div>
+                    <div class="card-header">
+                        <div class="city-title">🇯🇵 沖繩</div>
+                        <div class="flight-badge">直飛 1.5 小時</div>
+                    </div>
+                    <div class="soul-quote">🏆 「離高雄最近的慢活天堂！下飛機自駕散步，藥妝服飾輕鬆補滿。」</div>
+                    <div class="highlights"><b>心動點：</b> 航程極短、自駕散步慢活、日系服飾與藥妝採購。</div>
+                    <div class="brand-tags">
+                        <span class="tag has">UNIQLO</span>
+                        <span class="tag has">GU</span>
+                        <span class="tag has">MEGA 唐吉軻德</span>
+                    </div>
+                    <div class="data-row"><span class="data-label">平均餐飲費</span><span class="data-value">NT$ 250 - 500 / 餐</span></div>
+                    <div class="data-row"><span class="data-label">獨特亮點</span><span class="data-value">美國村、瀨長島、來客夢</span></div>
+                </div>
+            </div>
+
+            <!-- 石垣島 -->
+            <div class="city-card" onclick="openModal('ishigaki')">
+                <div>
+                    <div class="card-header">
+                        <div class="city-title">🇯🇵 石垣島</div>
+                        <div class="flight-badge">直飛約 1 小時</div>
+                    </div>
+                    <div class="soul-quote">🏆 「全島基本上只有兩件事：極致放空看海、狂吃炭火石垣牛。」</div>
+                    <div class="highlights"><b>心動點：</b> 頂級石垣牛燒肉、極度悠閒放空、無人潮擁擠感。</div>
+                    <div class="brand-tags">
+                        <span class="tag no">無大型 UNIQLO/GU</span>
+                        <span class="tag has">唐吉軻德</span>
+                        <span class="tag has">MaxValu 24H</span>
+                    </div>
+                    <div class="data-row"><span class="data-label">平均餐飲費</span><span class="data-value">NT$ 300 - 700 / 餐</span></div>
+                    <div class="data-row"><span class="data-label">獨特亮點</span><span class="data-value">極致燒肉、川平灣玻璃船</span></div>
+                </div>
+            </div>
+
+            <!-- 曼谷 -->
+            <div class="city-card" onclick="openModal('bangkok')">
+                <div>
+                    <div class="card-header">
+                        <div class="city-title">🇹🇭 曼谷</div>
+                        <div class="flight-badge">直飛 3.5 - 4 小時</div>
+                    </div>
+                    <div class="soul-quote">🏆 「全程走空中步道吹冷氣逛百貨，晚上享受平價泰式貴婦 SPA。」</div>
+                    <div class="highlights"><b>心動點：</b> 百貨密集完全免曬太陽、泰式按摩超平價、同伴沒去過。</div>
+                    <div class="brand-tags">
+                        <span class="tag has">UNIQLO (UTme!限定)</span>
+                        <span class="tag has">EmSphere / Siam 百貨</span>
+                    </div>
+                    <div class="data-row"><span class="data-label">平均餐飲費</span><span class="data-value">NT$ 80 - 250 / 餐</span></div>
+                    <div class="data-row"><span class="data-label">獨特亮點</span><span class="data-value">喬德夜市、高空酒吧、SPA</span></div>
+                </div>
+            </div>
+
+            <!-- 胡志明市 -->
+            <div class="city-card" onclick="openModal('hochiminh')">
+                <div>
+                    <div class="card-header">
+                        <div class="city-title">🇻🇳 胡志明市</div>
+                        <div class="flight-badge">直飛 3.5 小時</div>
+                    </div>
+                    <div class="soul-quote">🏆 「第 3 郡質感平價潮牌爆買，午後享受草本熱石 SPA 與法式咖啡。」</div>
+                    <div class="highlights"><b>心動點：</b> 第3郡韓系/質感平價潮牌爆買、法式咖啡館、熱石 SPA。</div>
+                    <div class="brand-tags">
+                        <span class="tag has">UNIQLO (第一郡旗艦店)</span>
+                        <span class="tag has">The New Playground</span>
+                    </div>
+                    <div class="data-row"><span class="data-label">平均餐飲費</span><span class="data-value">NT$ 60 - 180 / 餐</span></div>
+                    <div class="data-row"><span class="data-label">獨特亮點</span><span class="data-value">越式法包、第3郡潮牌街</span></div>
+                </div>
+            </div>
+
+            <!-- 峴港 -->
+            <div class="city-card" onclick="openModal('danang')">
+                <div>
+                    <div class="card-header">
+                        <div class="city-title">🇻🇳 峴港</div>
+                        <div class="flight-badge">直飛 2.5 小時</div>
+                    </div>
+                    <div class="soul-quote">🏆 「千元住高檔海景飯店，大排檔爽吃現秤生猛龍蝦海鮮大餐。」</div>
+                    <div class="highlights"><b>心動點：</b> 韓市場腰果/快閃訂製奧黛、渡假飯店 CP 值高。</div>
+                    <div class="brand-tags">
+                        <span class="tag has">UNIQLO (AEON店)</span>
+                        <span class="tag has">韓市場 / 樂天瑪特</span>
+                    </div>
+                    <div class="data-row"><span class="data-label">平均餐飲費</span><span class="data-value">NT$ 50 - 150 / 餐</span></div>
+                    <div class="data-row"><span class="data-label">獨特亮點</span><span class="data-value">Bé Mặn海鮮、龍橋噴火秀</span></div>
+                </div>
+            </div>
+
+            <!-- 深圳 -->
+            <div class="city-card" onclick="openModal('shenzhen')">
+                <div>
+                    <div class="card-header">
+                        <div class="city-title">🇨🇳 深圳 (華強北)</div>
+                        <div class="flight-badge">直飛 1.5 小時</div>
+                    </div>
+                    <div class="soul-quote">🏆 「去程帶空行李箱，回程裝滿智慧家電與麻辣火鍋底料。」</div>
+                    <div class="highlights"><b>心動點：</b> 華強北 3C/智慧家電爆買、空運底料正宗重慶麻辣火鍋。</div>
+                    <div class="brand-tags">
+                        <span class="tag has">華強北電子街</span>
+                        <span class="tag has">小米 / 華為旗艦店</span>
+                    </div>
+                    <div class="data-row"><span class="data-label">平均餐飲費</span><span class="data-value">NT$ 150 - 350 / 餐</span></div>
+                    <div class="data-row"><span class="data-label">獨特亮點</span><span class="data-value">珮姐火鍋、潤園四季椰子雞</span></div>
+                </div>
+            </div>
+
+            <!-- 重慶 -->
+            <div class="city-card" onclick="openModal('chongqing')">
+                <div>
+                    <div class="card-header">
+                        <div class="city-title">🇨🇳 重慶</div>
+                        <div class="flight-badge">直飛約 3.5 小時</div>
+                    </div>
+                    <div class="soul-quote">🏆 「只要能吃辣，這裡就是全亞洲最魔幻的 8D 山頭火鍋天堂。」</div>
+                    <div class="highlights"><b>心動點：</b> 枇杷園山頭火鍋、正宗九宮格牛油老火鍋、觀音橋買電器。</div>
+                    <div class="brand-tags">
+                        <span class="tag has">觀音橋蘇寧 / 小米</span>
+                        <span class="tag has">枇杷園火鍋山</span>
+                    </div>
+                    <div class="data-row"><span class="data-label">平均餐飲費</span><span class="data-value">NT$ 100 - 250 / 餐</span></div>
+                    <div class="data-row"><span class="data-label">獨特亮點</span><span class="data-value">洪崖洞夜景、周師兄火鍋</span></div>
+                </div>
+            </div>
+
+            <!-- 上海 -->
+            <div class="city-card" onclick="openModal('shanghai')">
+                <div>
+                    <div class="card-header">
+                        <div class="city-title">🇨🇳 上海</div>
+                        <div class="flight-badge">直飛 2 - 2.5 小時</div>
+                    </div>
+                    <div class="soul-quote">🏆 「外灘摩天大樓奢華夜景，梧桐樹下潮牌選品店與精緻蟹黃麵。」</div>
+                    <div class="highlights"><b>心動點：</b> 外灘高樓頂級摩天夜景、安福路/武康路潮牌選品店、精緻火鍋。</div>
+                    <div class="brand-tags">
+                        <span class="tag has">徐家匯蘇寧 / 小米</span>
+                        <span class="tag has">安福路選品街</span>
+                    </div>
+                    <div class="data-row"><span class="data-label">平均餐飲費</span><span class="data-value">NT$ 200 - 500 / 餐</span></div>
+                    <div class="data-row"><span class="data-label">獨特亮點</span><span class="data-value">外灘夜景、裕興記蟹黃麵</span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TAB 2: 國家共通規範 -->
+    <div id="nationalTab" class="tab-content">
+        <div style="overflow-x: auto; background: #ffffff; border-radius: 12px; border: 1px solid var(--card-border); padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; min-width: 700px;">
+                <thead>
+                    <tr style="background-color: var(--primary-light); color: #0369a1; border-bottom: 2px solid var(--card-border);">
+                        <th style="padding: 12px; min-width: 130px;">國家與區域</th>
+                        <th style="padding: 12px; min-width: 140px;">簽證 / 入境</th>
+                        <th style="padding: 12px; min-width: 180px;">電壓 / 電器採購</th>
+                        <th style="padding: 12px; min-width: 180px;">退稅機制</th>
+                        <th style="padding: 12px; min-width: 180px;">支付方式便利度</th>
+                        <th style="padding: 12px; min-width: 120px;">小費文化</th>
+                        <th style="padding: 12px; min-width: 160px;">網卡 / eSIM 推薦</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--card-border);">
+                        <td style="padding: 12px; font-weight: 700;">🇯🇵 日本<br><span style="font-size:0.8rem; color:var(--text-muted);">(沖繩/石垣)</span></td>
+                        <td style="padding: 12px;"><b style="color:var(--accent-green);">免簽證</b><br>Visit Japan Web QR Code</td>
+                        <td style="padding: 12px;"><b>100V (扁平雙孔)</b><br>台灣插頭直插；加熱家電功率稍慢</td>
+                        <td style="padding: 12px;">滿 5,000 日圓<br><span style="color:#b91c1c; font-size:0.8rem; font-weight:bold;">⚠️ 2026/11/1 新制：</span><br>先收 10% 含稅價，<b>離境機場查驗後退稅</b></td>
+                        <td style="padding: 12px;">信用卡、PayPay、ICOCA/Suica 極普及</td>
+                        <td style="padding: 12px;">無小費</td>
+                        <td style="padding: 12px;">Softbank / Docomo 原生 eSIM</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--card-border);">
+                        <td style="padding: 12px; font-weight: 700;">🇹🇭 泰國<br><span style="font-size:0.8rem; color:var(--text-muted);">(曼谷)</span></td>
+                        <td style="padding: 12px;"><b style="color:var(--accent-green);">免簽證</b><br>台灣目前免簽</td>
+                        <td style="padding: 12px;"><b>220V (兩孔通用)</b><br>手機/筆電直插；買家電需注意電壓</td>
+                        <td style="padding: 12px;">單店滿 2,000 泰銖<br>機場海關蓋章領現 (約 8.5%)</td>
+                        <td style="padding: 12px;">Grab 叫車綁卡；夜市/小吃使用現金</td>
+                        <td style="padding: 12px;">按摩 50-100 銖<br>床頭 20 銖</td>
+                        <td style="padding: 12px;">AIS / TrueMove 吃到飽 eSIM</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--card-border);">
+                        <td style="padding: 12px; font-weight: 700;">🇻🇳 越南<br><span style="font-size:0.8rem; color:var(--text-muted);">(胡志明/峴港)</span></td>
+                        <td style="padding: 12px;"><b style="color:var(--accent-red);">電子簽 (e-Visa)</b><br>$25 美金 (審核 3-5 天)</td>
+                        <td style="padding: 12px;"><b>220V (雙圓/雙扁)</b><br>手機充電器直接插</td>
+                        <td style="padding: 12px;">單店滿 2,000,000 盾<br>機場蓋章領現 (約 8.5%)，普及率低</td>
+                        <td style="padding: 12px;">Grab 叫車綁卡；其餘<b>強烈建議銀樓換現盾</b></td>
+                        <td style="padding: 12px;">高級 SPA 另給 5萬盾；小吃免給</td>
+                        <td style="padding: 12px;">Viettel 電信 (覆蓋率與網速最佳)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; font-weight: 700;">🇨🇳 中國<br><span style="font-size:0.8rem; color:var(--text-muted);">(深圳/重慶/上海)</span></td>
+                        <td style="padding: 12px;"><b style="color:var(--accent-green);">台胞證免簽</b><br>持台胞證免簽入境</td>
+                        <td style="padding: 12px;"><b>220V</b><br>買 3C/家電需認明 <b>100-240V</b> 通用電壓</td>
+                        <td style="padding: 12px;">僅部分指定大型百貨有<br>一般店家無退稅</td>
+                        <td style="padding: 12px;"><b>99% 無現金</b><br>需下載微信/支付寶綁台灣信用卡</td>
+                        <td style="padding: 12px;">無小費</td>
+                        <td style="padding: 12px;">台灣先買好<b>中港卡 / 漫遊 eSIM</b> (免翻牆)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 3: 行事曆與避雷指南 -->
+    <div id="calendarTab" class="tab-content">
+        <div class="section-sub-title">📊 跨國分軌甘特圖 (2026/09 - 2027/02)</div>
+        <div class="gantt-container">
+            <div style="margin-bottom: 16px; font-size: 0.85rem; display: flex; gap: 16px; flex-wrap: wrap;">
+                <span><span style="display:inline-block; width:12px; height:12px; background:#2563eb; border-radius:2px;"></span> 🇹🇼 台灣連假</span>
+                <span><span style="display:inline-block; width:12px; height:12px; background:#dc2626; border-radius:2px;"></span> 🚨 國外大雷點 / 颱風雨季 / 春節高價期</span>
+                <span><span style="display:inline-block; width:12px; height:12px; background:#16a34a; border-radius:2px;"></span> ✨ 黃金出遊推薦期</span>
+            </div>
+
+            <div class="gantt-header-row">
+                <div class="gantt-country-col">國家 / 區域</div>
+                <div class="gantt-months-wrapper">
+                    <div>2026/09</div><div>2026/10</div><div>2026/11</div><div>2026/12</div><div>2027/01</div><div>2027/02</div>
+                </div>
+            </div>
+
+            <div class="gantt-track-row">
+                <div class="gantt-country-name">🇹🇼 台灣連假</div>
+                <div class="gantt-timeline-wrapper">
+                    <div class="gantt-cell"><div class="bar bar-blue" style="width:100%;">9/25-27中秋</div></div>
+                    <div class="gantt-cell"><div class="bar bar-blue" style="width:100%;">10/10-12國慶</div></div>
+                    <div class="gantt-cell"></div><div class="gantt-cell"></div>
+                    <div class="gantt-cell"><div class="bar bar-blue" style="width:100%;">1/1-3元旦</div></div>
+                    <div class="gantt-cell"><div class="bar bar-blue" style="width:100%;">2/5-12春節</div></div>
+                </div>
+            </div>
+
+            <div class="gantt-track-row">
+                <div class="gantt-country-name">🇯🇵 日本 (沖繩/石垣)</div>
+                <div class="gantt-timeline-wrapper">
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:100%;">秋季涼爽</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:100%;">散步舒適</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:100%;">離峰便宜</div></div>
+                    <div class="gantt-cell"><div class="bar bar-red" style="width:50%; margin-left:50%;">跨年漲價</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:80%;">1月平價</div></div>
+                    <div class="gantt-cell"><div class="bar bar-red" style="width:80%;">春節高價</div></div>
+                </div>
+            </div>
+
+            <div class="gantt-track-row">
+                <div class="gantt-country-name">🇹🇭 泰國 (曼谷)</div>
+                <div class="gantt-timeline-wrapper">
+                    <div class="gantt-cell"><div class="bar bar-red" style="width:80%;">雨季高峰</div></div>
+                    <div class="gantt-cell"><div class="bar bar-yellow" style="width:80%;">雨季尾聲</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:100%;">✨涼季開始</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:70%;">12月乾爽</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:80%;">1月乾季</div></div>
+                    <div class="gantt-cell"><div class="bar bar-red" style="width:80%;">春節高價</div></div>
+                </div>
+            </div>
+
+            <div class="gantt-track-row">
+                <div class="gantt-country-name">🇻🇳 胡志明市 (南越)</div>
+                <div class="gantt-timeline-wrapper">
+                    <div class="gantt-cell"><div class="bar bar-red" style="width:100%;">9/1-4國慶大雷</div></div>
+                    <div class="gantt-cell"><div class="bar bar-yellow" style="width:80%;">陣雨尾聲</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:100%;">✨涼季開始</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:80%;">✨12月乾季首選</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:80%;">1月離峰</div></div>
+                    <div class="gantt-cell"><div class="bar bar-red" style="width:90%;">春節返鄉潮</div></div>
+                </div>
+            </div>
+
+            <div class="gantt-track-row">
+                <div class="gantt-country-name">🇻🇳 峴港 (中越)</div>
+                <div class="gantt-timeline-wrapper">
+                    <div class="gantt-cell"><div class="bar bar-red" style="width:100%;">颱風雨季</div></div>
+                    <div class="gantt-cell"><div class="bar bar-red" style="width:100%;">大雨季 (避開)</div></div>
+                    <div class="gantt-cell"><div class="bar bar-yellow" style="width:80%;">雨季尾聲</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:80%;">12月轉乾</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:80%;">1月進入乾季</div></div>
+                    <div class="gantt-cell"><div class="bar bar-red" style="width:90%;">春節高價期</div></div>
+                </div>
+            </div>
+
+            <div class="gantt-track-row">
+                <div class="gantt-country-name">🇨🇳 中國 (深圳/重慶/上海)</div>
+                <div class="gantt-timeline-wrapper">
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:90%;">秋高氣爽</div></div>
+                    <div class="gantt-cell"><div class="bar bar-red" style="width:100%;">10/1-7十一黃金週</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:100%;">✨11月最宜人</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:70%;">12月上旬平價</div></div>
+                    <div class="gantt-cell"><div class="bar bar-green" style="width:80%;">1月離峰</div></div>
+                    <div class="gantt-cell"><div class="bar bar-red" style="width:100%;">春節春運高價</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-sub-title">📌 各月份詳細避雷指南</div>
+        <div class="month-grid">
+            <div class="month-card">
+                <div class="month-title">🗓️ 2026 年 9 月</div>
+                <div class="event-item event-blue"><b>🇹🇼 台灣連假：</b> 9/25 (五) - 9/27 (日) 中秋節 3 連休。</div>
+                <div class="event-item event-red"><b>🚨 9/1 - 9/4 越南國慶連假：</b> 景點爆滿、房價翻倍，千萬避開。</div>
+                <div class="event-item event-yellow"><b>⚠️ 峴港 / 曼谷雨季：</b> 9 月為中越颱風季與曼谷雷陣雨高峰。</div>
+                <div class="event-item event-green"><b>🟢 沖繩避暑：</b> 氣溫降至 26-28°C，極適合快閃散步。</div>
+            </div>
+
+            <div class="month-card">
+                <div class="month-title">🗓️ 2026 年 10 月</div>
+                <div class="event-item event-blue"><b>🇹🇼 台灣連假：</b> 10/10 (六) - 10/12 (一) 國慶日 3 連休。</div>
+                <div class="event-item event-red"><b>🚨 10/1 - 10/7 中國十一黃金週：</b> 全中國景點爆滿、機票飯店極貴。</div>
+                <div class="event-item event-yellow"><b>⚠️ 峴港雨季尾聲：</b> 降雨機率仍高。</div>
+                <div class="event-item event-green"><b>🟢 泰國過渡期：</b> 雨季尾聲，房價相對平價。</div>
+            </div>
+
+            <div class="month-card">
+                <div class="month-title">🗓️ 2026 年 11 月</div>
+                <div class="event-item event-green"><b>✨ 泰國黃金出遊期：</b> 正式進入涼季 (乾爽無雨)，極度推薦！</div>
+                <div class="event-item event-yellow"><b>🏮 泰國水燈節 (11月中)：</b> 曼谷節慶氣氛極佳，飯店需提早預訂。</div>
+                <div class="event-item event-green"><b>🟢 中國/日本秋高氣爽：</b> 深圳與沖繩氣候最宜人。</div>
+            </div>
+
+            <div class="month-card">
+                <div class="month-title">🗓️ 2026 年 12 月</div>
+                <div class="event-item event-green"><b>✨ 胡志明市/峴港黃金期：</b> 進入乾季，微風涼爽最適宜！</div>
+                <div class="event-item event-green"><b>🟢 12/1 - 12/20 平日首選：</b> 全區無大連假，飯店機票 CP 值最高。</div>
+                <div class="event-item event-red"><b>🚨 12/24 - 12/31 聖誕/跨年：</b> 全球旅遊熱潮，飯店房價飆漲。</div>
+            </div>
+
+            <div class="month-card">
+                <div class="month-title">🗓️ 2027 年 1 月</div>
+                <div class="event-item event-blue"><b>🇹🇼 台灣連假：</b> 1/1 (五) - 1/3 (日) 元旦 3 連休。</div>
+                <div class="event-item event-green"><b>🟢 1/4 - 1/25 出遊黃金期：</b> 跨年後至農曆年前的小離峰，價格平實。</div>
+                <div class="event-item event-red"><b>🚨 1/28 起春節返鄉潮：</b> 全亞洲華人區機票價格開始飆升。</div>
+            </div>
+
+            <div class="month-card">
+                <div class="month-title">🗓️ 2027 年 2 月</div>
+                <div class="event-item event-blue"><b>🇹🇼 台灣連假：</b> 2/5 (五) - 2/12 (五) 農曆春節連假。</div>
+                <div class="event-item event-red"><b>🚨 全亞春節高價期：</b> 中國/越南/泰國/台灣迎來春節旺季，機票飯店極貴。</div>
+                <div class="event-item event-green"><b>🟢 2/20 後旅遊平穩期：</b> 春節過後房價快速回落。</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL POPUP -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+        <button class="modal-close-btn" onclick="forceCloseModal()">✕</button>
+        
+        <!-- 頂部 3 圖藝廊網格 -->
+        <div class="modal-gallery">
+            <img id="modalImgMain" class="gallery-main" src="" alt="main">
+            <div class="gallery-sub-grid">
+                <img id="modalImgSub1" class="gallery-sub" src="" alt="sub1">
+                <img id="modalImgSub2" class="gallery-sub" src="" alt="sub2">
+            </div>
+        </div>
+
+        <!-- 底部文字獨立區 -->
+        <div class="modal-body">
+            <div id="modalTitle" class="modal-title">城市名稱</div>
+            
+            <div class="modal-section">
+                <div class="modal-section-title">🛍️ 購物與品牌攻略</div>
+                <div id="modalShopping" class="modal-text">購物細節...</div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-title">🍲 美食、著名餐廳與體驗</div>
+                <div id="modalFood" class="modal-text">美食細節...</div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-title">🚶‍♂️ 4 天快閃「完美節奏」建議</div>
+                <div id="modalPacing" class="modal-text">節奏建議...</div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-title">🚨 行前避雷與重要提醒</div>
+                <div id="modalWarning" class="modal-text">避雷提醒...</div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-title">🎁 必買戰利品 Wishlist</div>
+                <div id="modalWishlist" class="modal-text">戰利品...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    const cityData = {
+        okinawa: {
+            title: "🇯🇵 日本：沖繩",
+            imgMain: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=800&q=80",
+            imgSub1: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80",
+            imgSub2: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80",
+            shopping: "具備大型 UNIQLO 與 GU 門市（如「永旺夢樂城來客夢 AEON MALL」），以及 24 小時營業的「MEGA 唐吉軻德宜野灣店」，藥妝補貨極高。還有港川外人住宅街的美式老宅雜貨選品店。",
+            food: "必吃名店「琉球之牛」頂級阿古豬與和牛燒肉、幸福鬆餅瀨長島店、百年老店「岸本食堂」手打傳統沖繩麵（Soba）與苦瓜炒豆腐。",
+            pacing: "Day 1 高雄直飛租車 ➔ 瀨長島看海散步吃幸福鬆餅 ➔ 美國村海景晚餐；Day 2 來客夢 AEON MALL 購物爆買 ➔ 琉球之牛燒肉；Day 3 港川外人住宅街選品 ➔ 24H MEGA 唐吉軻德爆買；Day 4 輕鬆還車搭機直飛高雄。",
+            warning: "瀨長島商圈免預約、免費停車、中文點餐友善；機場取車手續約需 1 小時；2026/11/1 起日本退稅改為離境機場查驗退稅新制。",
+            wishlist: "邊銀食堂辣油、雪鹽黑糖、沖繩限定 Orion 啤酒配件、資生堂藥妝、UNIQLO 限定款式。"
+        },
+        ishigaki: {
+            title: "🇯🇵 日本：石垣島",
+            imgMain: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
+            imgSub1: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80",
+            imgSub2: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=600&q=80",
+            shopping: "無大型 UNIQLO/GU。購物以美崎町拱廊商店街（Euglena Mall）、平價唐吉軻德石垣店，以及 24H 大型「MaxValu 超市」買在地辣油與黑糖為主。",
+            food: "專程飛來也值得的「炭火燒肉金城」與「瑪比亞燒肉」（頂級石垣牛雪花極致美味）、明石食堂燉豬腳沖繩麵、邊銀食堂在地家常料理。",
+            pacing: "Day 1 飛行 1 小時抵達 ➔ 飯店 Check-in ➔ 炭火燒肉金城；Day 2 川平灣玻璃船觀景（現場買票免預約看海龜珊瑚）➔ 瑪比亞石垣牛燒肉 ➔ 星空散步；Day 3 MaxValu 超市爆買 ➔ 美崎町居酒屋聽三味線民謠；Day 4 離峰搭機回高雄。",
+            warning: "川平灣琉球玻璃船免預約，現場買票每 15 分鐘一班；石垣牛熱門燒肉名店務必提早 2 週以上網路訂位。",
+            wishlist: "邊銀食堂石垣島辣油、請福泡盛酒、石垣牛仙貝、在地手作黑糖。"
+        },
+        bangkok: {
+            title: "🇹🇭 泰國：曼谷",
+            imgMain: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800&q=80",
+            imgSub1: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80",
+            imgSub2: "https://images.unsplash.com/photo-1559314809-0d155014e29e?w=600&q=80",
+            shopping: "大型百貨（Siam Paragon, EmSphere, Central World）全程有空調且空中步道直通免曬太陽！UNIQLO 設有泰國限定 UTme! 客製印製體驗；還有水門市場批發服飾。",
+            food: "Let's Relax / Health Land 平價泰式草本熱石 SPA、建興酒家咖哩炒蟹、米其林推薦綠珍寶海南雞飯、喬德夜市火山排骨、Tichuca 360 度高空水母酒吧夜景。",
+            pacing: "Day 1 直飛曼谷 ➔ Siam 商圈逛百貨 ➔ 建興酒家咖哩蟹；Day 2 EmSphere 百貨購物 ➔ UTme! 客製化短 T ➔ Let's Relax 熱石 SPA；Day 3 綠珍寶海南雞 ➔ 喬德夜市火山排骨 ➔ Tichuca 高空酒吧；Day 4 飯店輕鬆退房搭機。",
+            warning: "路邊千萬不要搭黃綠計程車（容易被喊價繞路），務必下載 Grab 或 Bolt APP 叫車；百貨公司冷氣極強記得隨身帶薄外套。",
+            wishlist: "手標泰式奶茶包、Poy-Sian 鼻通香膏、UTme! 客製化短 T、皇家計畫蜂蜜。"
+        },
+        hochiminh: {
+            title: "🇻🇳 越南：胡志明市",
+            imgMain: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&q=80",
+            imgSub1: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=600&q=80",
+            imgSub2: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=600&q=80",
+            shopping: "第一郡有 UNIQLO 大型旗艦店與 Zara；「第 3 郡潮牌街 & The New Playground」則是韓系質感平價設計師服飾的大本營，買衣服 CP 值爆表！",
+            food: "Miu Miu Spa / Noir Spa 超高 CP 值草本熱石按摩（90分鐘僅約 NT$500-700）、Bánh Mì Huỳnh Hoa 排隊第一名爆餡越式法包、Phở Lệ 麗錦牛肉河粉、咖啡公寓老宅蛋咖啡。",
+            pacing: "Day 1 直飛胡志明 ➔ 飯店 Check-in ➔ Bánh Mì 法包 ➔ Miu Miu 熱石 SPA；Day 2 第一郡 UNIQLO 旗艦店 ➔ 第 3 郡潮牌街與 The New Playground 爆買；Day 3 咖啡公寓品嚐蛋咖啡 ➔ 西貢河景觀酒吧看夜景；Day 4 市區輕鬆散步搭機。",
+            warning: "路邊拍照注意馬路機車飛賊；建議持台幣千元鈔去檳城市場對面銀樓換現盾，匯率最划算。",
+            wishlist: "Marou 精品巧克力、G7/Trung Nguyen 滴漏咖啡粉、第 3 郡設計師潮牌服飾。"
+        },
+        danang: {
+            title: "🇻🇳 越南：峴港",
+            imgMain: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&q=80",
+            imgSub1: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&q=80",
+            imgSub2: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&q=80",
+            shopping: "AEON MALL 內設有 UNIQLO 門市與超市；「韓市場（Han Market）」可以買帶皮鹽焗腰果、咖啡豆，甚至 1 小時快閃訂製專屬越式奧黛（Ao Dai）；還有樂天瑪特。",
+            food: "「Bé Mặn」美溪沙灘旁現秤生猛龍蝦與烤文蛤海鮮大餐、Madame Lân（蘭夫人）質感高雅越式煎餅與高樓麵、龍橋周邊椰子冰淇淋。",
+            pacing: "Day 1 直飛峴港 ➔ 五星海景飯店 Check-in ➔ Bé Mặn 現秤龍蝦大餐；Day 2 韓市場訂製奧黛與買腰果 ➔ AEON MALL UNIQLO 購物；Day 3 海景飯店無邊際泳池與 SPA ➔ 龍橋週末噴火秀；Day 4 海景早餐輕鬆搭機。",
+            warning: "⚠️ 9-11 月為中越颱風與大雨季，強烈建議安排在 12 月或 1 月前往；海鮮大排檔點餐前務必先確認現秤單價。",
+            wishlist: "帶皮鹽焗腰果、越南乾椰子片、訂製奧黛服飾、越南滴漏咖啡壺。"
+        },
+        shenzhen: {
+            title: "🇨🇳 中國：深圳 (華強北)",
+            imgMain: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80",
+            imgSub1: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80",
+            imgSub2: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
+            shopping: "全球最大「華強北賽格電子市場」，智慧家居、充電配件與 Gadgets 應有盡有！小米之家萬象天地旗艦店與華為智能生活館；深圳灣萬象城質感潮牌選品店。",
+            food: "珮姐老火鍋 / 牛玉堂正宗空運九宮格牛油麻辣鍋、朱光玉火鍋館國潮風絲絲冰、潤園四季竹笙椰子雞湯（不吃辣備案）。",
+            pacing: "Day 1 高雄直飛 1.5H 抵達 ➔ 飯店 Check-in ➔ 珮姐牛油老火鍋晚餐；Day 2 全天華強北賽格電子街爆買 ➔ 小米萬象天地旗艦店買智慧家電；Day 3 潤園四季椰子雞 ➔ 萬象城潮流選品；Day 4 廣式飲茶早午餐搭機。",
+            warning: "買家電需確認支援 100-240V 全球電壓；出發前手機務必綁定微信/支付寶（綁台灣信用卡即可），現場 99% 不收現金。",
+            wishlist: "珮姐/周師兄牛油火鍋底料包、小米智慧居家配件、華強北快充線材。"
+        },
+        chongqing: {
+            title: "🇨🇳 重慶",
+            imgMain: "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80",
+            imgSub1: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80",
+            imgSub2: "https://images.unsplash.com/photo-1555126634-323283e090fa?w=600&q=80",
+            shopping: "亞洲客流量前幾大的「觀音橋步行街商圈」，擁有巨大的蘇寧易購與小米旗艦店，買平價 3C 與家電極方便；解放碑商圈百貨林立。",
+            food: "金氏世界紀錄「枇杷園山頭火鍋」（承包整座山頭燈火通明吃火鍋）、周師兄大刀腰片火鍋、珮姐九宮格火鍋、花市碗雜麵與正宗重慶小麵、歌樂山辣子雞。",
+            pacing: "Day 1 直飛重慶 ➔ 解放碑飯店 Check-in ➔ 周師兄九宮格火鍋；Day 2 觀音橋蘇寧/小米買家電 ➔ 枇杷園山頭夜景火鍋；Day 3 洪崖洞 8D 魔幻懸崖夜景 ➔ 花市碗雜麵 ➔ 長江索道；Day 4 輕鬆搭機返高。",
+            warning: "重慶地形立體（8D 城市），地圖定位有時會迷路；火鍋微辣等於台灣的大辣，不吃辣請點鴛鴦鍋。",
+            wishlist: "橋頭/德莊重慶火鍋底料、張飛牛肉干、陳麻花、觀音橋買的小米家電。"
+        },
+        shanghai: {
+            title: "🇨🇳 上海",
+            imgMain: "https://images.unsplash.com/photo-1538428494232-9c0d8a3ab403?w=800&q=80",
+            imgSub1: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80",
+            imgSub2: "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=600&q=80",
+            shopping: "安福路 / 武康路（梧桐樹下獨立設計師選品店、文青雜貨與 Harmay 話梅美妝）；徐家匯大型家電商場與 Apple 旗艦店。",
+            food: "「裕興記」爆汁純蟹黃拌麵、撈王豬肚雞湯鍋、高端潮汕牛肉火鍋、小楊生煎包與佳家湯包、陸家嘴 ROOFTOP 高空酒吧看東方明珠。",
+            pacing: "Day 1 高雄直飛上海 ➔ 外灘散步看萬國建築夜景 ➔ 裕興記蟹黃麵；Day 2 安福路/武康路梧桐樹選品店散步 ➔ 陸家嘴 ROOFTOP 高空酒吧；Day 3 徐家匯家電商場採購 ➔ 撈王豬肚雞鍋；Day 4 小楊生煎包搭機。",
+            warning: "外灘觀景平台人潮極多注意隨身物品；叫車建議下載滴滴出行（Didi）綁定微信支付使用。",
+            wishlist: "上海沈大成糕點、裕興記蟹黃醬禮盒、安福路獨立設計師飾品。"
+        }
+    };
+
+    function openModal(cityKey) {
+        const data = cityData[cityKey];
+        if(!data) return;
+
+        // 1. 設置圖片與文字
+        document.getElementById('modalImgMain').src = data.imgMain;
+        document.getElementById('modalImgSub1').src = data.imgSub1;
+        document.getElementById('modalImgSub2').src = data.imgSub2;
+
+        document.getElementById('modalTitle').innerText = data.title;
+        document.getElementById('modalShopping').innerText = data.shopping;
+        document.getElementById('modalFood').innerText = data.food;
+        document.getElementById('modalPacing').innerText = data.pacing;
+        document.getElementById('modalWarning').innerText = data.warning;
+        document.getElementById('modalWishlist').innerText = data.wishlist;
+
+        // 2. 顯示彈窗
+        const overlay = document.getElementById('modalOverlay');
+        overlay.classList.add('active');
+
+        // 3. 強制捲動軸重置回頂部 (Top = 0)
+        const modalCard = overlay.querySelector('.modal-card');
+        if (modalCard) {
+            modalCard.scrollTop = 0;
+        }
+    }
+
+    function closeModal(event) {
+        if(event.target.id === 'modalOverlay') {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+    }
+
+    function forceCloseModal() {
+        document.getElementById('modalOverlay').classList.remove('active');
+    }
+</script>
+
+</body>
+</html>
