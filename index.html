@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高雄出發 4 天自由行決策 Dashboard</title>
+    <title>曼谷機票評估</title>
     <style>
         :root {
             --bg-color: #f8fafc;
@@ -19,6 +19,10 @@
             --accent-red-bg: #fef2f2;
             --accent-blue: #1d4ed8;
             --accent-blue-bg: #eff6ff;
+            --accent-purple: #6366f1;
+            --accent-purple-bg: #eef2ff;
+            --accent-orange: #ea580c;
+            --accent-orange-bg: #fff7ed;
             --tag-bg: #f1f5f9;
             --tag-border: #cbd5e1;
         }
@@ -276,7 +280,7 @@
         }
         .modal-text { font-size: 0.95rem; color: #334155; line-height: 1.65; }
 
-        /* Table & Gantt Chart Styling */
+        /* Gantt Chart Styling */
         .gantt-container {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -393,6 +397,135 @@
         .event-green { background-color: var(--accent-green-bg); border-left: 4px solid var(--accent-green); color: #166534; }
         .event-yellow { background-color: #fefce8; border-left: 4px solid #ca8a04; color: #854d0e; }
 
+        /* TAB 4: 曼谷機票評估專用樣式 */
+        .flight-eval-container {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .flight-eval-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        .timing-pills {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .timing-pill {
+            background-color: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.82rem;
+            color: #0369a1;
+        }
+
+        .timing-pill strong { color: #0284c7; }
+
+        .eval-table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+
+        .eval-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.88rem;
+            min-width: 860px;
+        }
+
+        .eval-table th {
+            background-color: var(--primary-light);
+            color: #0369a1;
+            font-weight: 700;
+            padding: 12px 14px;
+            border-bottom: 2px solid var(--card-border);
+        }
+
+        .eval-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--card-border);
+            vertical-align: middle;
+        }
+
+        .eval-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .plan-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .plan-badge.winner { background: var(--accent-green-bg); color: var(--accent-green); border: 1px solid #bbf7d0; }
+        .plan-badge.holiday { background: var(--accent-orange-bg); color: var(--accent-orange); border: 1px solid #fed7aa; }
+        .plan-badge.combo { background: var(--accent-purple-bg); color: var(--accent-purple); border: 1px solid #c7d2fe; }
+        .plan-badge.normal { background: var(--tag-bg); color: #475569; border: 1px solid var(--tag-border); }
+
+        .price-num {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0284c7;
+        }
+
+        .price-num.lowest {
+            color: #15803d;
+            font-weight: 800;
+        }
+
+        .decision-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .decision-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border-top: 4px solid var(--primary);
+        }
+
+        .decision-card.green-top { border-top-color: #16a34a; background-color: #f0fdf4; }
+        .decision-card.orange-top { border-top-color: #ea580c; background-color: #fff7ed; }
+        .decision-card.purple-top { border-top-color: #6366f1; background-color: #eef2ff; }
+
+        .decision-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .decision-card p {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.45;
+        }
+
         /* Mobile Optimization */
         @media (max-width: 640px) {
             h1 { font-size: 1.4rem; }
@@ -413,18 +546,16 @@
         <div class="subtitle">目標：預算親民、不玩水、美食/購物/電器採購、避開大雷點</div>
     </header>
 
-    <!-- Main Navigation Tabs -->
     <div class="main-tabs">
         <button class="tab-btn active" onclick="switchTab('citiesTab', this)">🏢 城市心動比較</button>
         <button class="tab-btn" onclick="switchTab('nationalTab', this)">🌍 國家共通規範</button>
         <button class="tab-btn" onclick="switchTab('calendarTab', this)">🗓️ 行事曆與避雷指南</button>
+        <button class="tab-btn" onclick="switchTab('bangkokFlightTab', this)">✈️ 曼谷機票評估 (請假≤2天)</button>
     </div>
 
-    <!-- TAB 1: 城市心動點比較 -->
     <div id="citiesTab" class="tab-content active">
         <div class="cards-grid">
             
-            <!-- 沖繩 -->
             <div class="city-card" onclick="openModal('okinawa')">
                 <div>
                     <div class="card-header">
@@ -443,7 +574,6 @@
                 </div>
             </div>
 
-            <!-- 石垣島 -->
             <div class="city-card" onclick="openModal('ishigaki')">
                 <div>
                     <div class="card-header">
@@ -462,7 +592,6 @@
                 </div>
             </div>
 
-            <!-- 曼谷 -->
             <div class="city-card" onclick="openModal('bangkok')">
                 <div>
                     <div class="card-header">
@@ -480,7 +609,6 @@
                 </div>
             </div>
 
-            <!-- 胡志明市 -->
             <div class="city-card" onclick="openModal('hochiminh')">
                 <div>
                     <div class="card-header">
@@ -498,7 +626,6 @@
                 </div>
             </div>
 
-            <!-- 峴港 -->
             <div class="city-card" onclick="openModal('danang')">
                 <div>
                     <div class="card-header">
@@ -516,7 +643,6 @@
                 </div>
             </div>
 
-            <!-- 深圳 -->
             <div class="city-card" onclick="openModal('shenzhen')">
                 <div>
                     <div class="card-header">
@@ -534,7 +660,6 @@
                 </div>
             </div>
 
-            <!-- 重慶 -->
             <div class="city-card" onclick="openModal('chongqing')">
                 <div>
                     <div class="card-header">
@@ -552,7 +677,6 @@
                 </div>
             </div>
 
-            <!-- 上海 -->
             <div class="city-card" onclick="openModal('shanghai')">
                 <div>
                     <div class="card-header">
@@ -573,7 +697,6 @@
         </div>
     </div>
 
-    <!-- TAB 2: 國家共通規範 -->
     <div id="nationalTab" class="tab-content">
         <div style="overflow-x: auto; background: #ffffff; border-radius: 12px; border: 1px solid var(--card-border); padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
             <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; min-width: 700px;">
@@ -630,7 +753,6 @@
         </div>
     </div>
 
-    <!-- TAB 3: 行事曆與避雷指南 -->
     <div id="calendarTab" class="tab-content">
         <div class="section-sub-title">📊 跨國分軌甘特圖 (2026/09 - 2027/02)</div>
         <div class="gantt-container">
@@ -767,14 +889,132 @@
         </div>
     </div>
 
+    <div id="bangkokFlightTab" class="tab-content">
+        <div class="flight-eval-container">
+            <div class="flight-eval-header">
+                <div>
+                    <h2 style="font-size:1.4rem; color:#0369a1; margin-bottom:4px; font-weight:700;">🇹🇭 高雄 (KHH) ↔ 曼谷 (BKK) 機票與請假方案全覽</h2>
+                    <p style="font-size:0.88rem; color:var(--text-muted);">針對華航、泰航及「去泰航＋回華航」晚班機混搭進行篩選（請假 ≤ 2 天）</p>
+                </div>
+                <div class="timing-pills">
+                    <div class="timing-pill"><strong>泰航 (TG)：</strong> 去 17:15 / 回 11:55</div>
+                    <div class="timing-pill"><strong>華航 (CI)：</strong> 去 14:40 / 回 18:20 (晚班)</div>
+                </div>
+            </div>
+
+            <div class="eval-table-wrapper">
+                <table class="eval-table">
+                    <thead>
+                        <tr>
+                            <th>方案標籤</th>
+                            <th>去回日期組合</th>
+                            <th>航空配置</th>
+                            <th>遊玩天數</th>
+                            <th>請假天數</th>
+                            <th>來回票價 / 人</th>
+                            <th>方案決策分析</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="plan-badge winner">🏆 CP 值之王</span></td>
+                            <td><strong>11/06 (五) ～ 11/09 (一)</strong></td>
+                            <td>泰航來回</td>
+                            <td>4 天 3 夜</td>
+                            <td><b>1.5 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(五下+一)</span></td>
+                            <td><span class="price-num lowest">NT$ 10,497</span></td>
+                            <td>涼季乾爽無雨，傳統航空不到 10,500 元</td>
+                        </tr>
+                        <tr>
+                            <td><span class="plan-badge holiday">⚡ 連假首選</span></td>
+                            <td><strong>10/24 (六) ～ 10/27 (二)</strong></td>
+                            <td>泰航來回</td>
+                            <td>4 天 3 夜</td>
+                            <td><b style="color:var(--accent-orange);">1 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(10/27)</span></td>
+                            <td><span class="price-num">NT$ 12,196</span></td>
+                            <td>吃滿連假紅利只需請 1 天假，週六出發不趕</td>
+                        </tr>
+                        <tr>
+                            <td><span class="plan-badge combo">🌟 混搭極致時間</span></td>
+                            <td><strong>10/24 (六) ～ 10/28 (三)</strong></td>
+                            <td>泰航去 ➔ 華航回</td>
+                            <td>5 天 4 夜</td>
+                            <td><b>2 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(10/27, 28)</span></td>
+                            <td><span class="price-num">NT$ 12,487</span></td>
+                            <td>爽玩 5 天，最後一天 18:20 晚班機悠閒逛街</td>
+                        </tr>
+                        <tr>
+                            <td><span class="plan-badge holiday">⚡ 連假晚回</span></td>
+                            <td><strong>10/24 (六) ～ 10/27 (二)</strong></td>
+                            <td>泰航去 ➔ 華航回</td>
+                            <td>4 天 3 夜</td>
+                            <td><b style="color:var(--accent-orange);">1 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(10/27)</span></td>
+                            <td><span class="price-num">NT$ 14,817</span></td>
+                            <td>只請 1 天，第 4 天有完整白天玩到下午 3 點</td>
+                        </tr>
+                        <tr>
+                            <td><span class="plan-badge normal">🏃 週末快閃晚回</span></td>
+                            <td><strong>11/06 (五) ～ 11/08 (日)</strong></td>
+                            <td>泰航去 ➔ 華航回</td>
+                            <td>3 天 2 夜</td>
+                            <td><b>0.5 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(五下午)</span></td>
+                            <td><span class="price-num">NT$ 12,917</span></td>
+                            <td>僅請半天假，週日整天玩好玩滿搭晚班機</td>
+                        </tr>
+                        <tr>
+                            <td><span class="plan-badge normal">🏃 泰航快閃</span></td>
+                            <td><strong>11/06 (五) ～ 11/08 (日)</strong></td>
+                            <td>泰航來回</td>
+                            <td>3 天 2 夜</td>
+                            <td><b>0.5 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(五下午)</span></td>
+                            <td><span class="price-num">NT$ 10,835</span></td>
+                            <td>請假最少，但週日中午 11:55 需搭機返國</td>
+                        </tr>
+                        <tr>
+                            <td><span class="plan-badge normal">💼 華航全包</span></td>
+                            <td><strong>10/25 (日) ～ 10/28 (三)</strong></td>
+                            <td>華航來回</td>
+                            <td>4 天 3 夜</td>
+                            <td><b>2 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(10/27, 28)</span></td>
+                            <td><span class="price-num">NT$ 14,048</span></td>
+                            <td>華航午去晚回，完整玩滿 4 天</td>
+                        </tr>
+                        <tr>
+                            <td><span class="plan-badge combo">🌟 涼季混搭晚回</span></td>
+                            <td><strong>11/06 (五) ～ 11/09 (一)</strong></td>
+                            <td>泰航去 ➔ 華航回</td>
+                            <td>4 天 3 夜</td>
+                            <td><b>1.5 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(五下+一)</span></td>
+                            <td><span class="price-num">NT$ 15,884</span></td>
+                            <td>涼季好天氣，搭配最後一天 18:20 晚班機</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="decision-cards-grid">
+                <div class="decision-card green-top">
+                    <h4 style="color:#15803d;">💰 最省錢 × 氣候最佳</h4>
+                    <p><strong>11/6 ~ 11/9 泰航來回（$10,497）：</strong>僅請 1.5 天假，進入曼谷乾爽涼季，無雨不悶熱，預算花費最低。</p>
+                </div>
+                <div class="decision-card orange-top">
+                    <h4 style="color:#ea580c;">⚡ 請假最少（連假紅利）</h4>
+                    <p><strong>10/24 ~ 10/27 泰航來回（$12,196）：</strong>只需請 1 天週二假即可爽玩 4 天 3 夜，週六出發不趕時間。</p>
+                </div>
+                <div class="decision-card purple-top">
+                    <h4 style="color:#4f46e5;">🛫 時間最大化（混搭晚回）</h4>
+                    <p><strong>10/24 ~ 10/28 泰去華回（$12,487）：</strong>請 2 天假玩足 5 天 4 夜，最後一天搭 18:20 班機最悠閒。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- MODAL POPUP -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
         <button class="modal-close-btn" onclick="forceCloseModal()">✕</button>
         
-        <!-- 頂部 3 圖藝廊網格 -->
         <div class="modal-gallery">
             <img id="modalImgMain" class="gallery-main" src="" alt="main">
             <div class="gallery-sub-grid">
@@ -783,7 +1023,6 @@
             </div>
         </div>
 
-        <!-- 底部文字獨立區 -->
         <div class="modal-body">
             <div id="modalTitle" class="modal-title">城市名稱</div>
             
@@ -919,7 +1158,6 @@
         const data = cityData[cityKey];
         if(!data) return;
 
-        // 1. 設置圖片與文字
         document.getElementById('modalImgMain').src = data.imgMain;
         document.getElementById('modalImgSub1').src = data.imgSub1;
         document.getElementById('modalImgSub2').src = data.imgSub2;
@@ -931,11 +1169,9 @@
         document.getElementById('modalWarning').innerText = data.warning;
         document.getElementById('modalWishlist').innerText = data.wishlist;
 
-        // 2. 顯示彈窗
         const overlay = document.getElementById('modalOverlay');
         overlay.classList.add('active');
 
-        // 3. 強制捲動軸重置回頂部 (Top = 0)
         const modalCard = overlay.querySelector('.modal-card');
         if (modalCard) {
             modalCard.scrollTop = 0;
