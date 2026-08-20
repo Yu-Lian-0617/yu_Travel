@@ -397,7 +397,7 @@
         .event-green { background-color: var(--accent-green-bg); border-left: 4px solid var(--accent-green); color: #166534; }
         .event-yellow { background-color: #fefce8; border-left: 4px solid #ca8a04; color: #854d0e; }
 
-        /* TAB 4: 曼谷機票評估專用樣式 */
+        /* TAB 4 & TAB 5: 曼谷機票評估通用樣式 */
         .flight-eval-container {
             background: #ffffff;
             border-radius: 14px;
@@ -526,12 +526,78 @@
             line-height: 1.45;
         }
 
+        /* TAB 5 專屬結構化多欄佈局 */
+        .price-matrix-grid-3col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .matrix-box {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .matrix-title {
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: #0369a1;
+            margin-bottom: 12px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mini-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+        }
+
+        .mini-table th {
+            background-color: #f1f5f9;
+            color: #334155;
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .mini-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .combo-summary-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 14px;
+            font-size: 0.86rem;
+        }
+
+        .combo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .combo-item:last-child { border-bottom: none; }
+
         /* Mobile Optimization */
         @media (max-width: 640px) {
             h1 { font-size: 1.4rem; }
             .main-tabs { gap: 6px; }
             .tab-btn { padding: 8px 12px; font-size: 0.85rem; }
             .cards-grid { grid-template-columns: 1fr; }
+            .price-matrix-grid-3col { grid-template-columns: 1fr; }
             .modal-gallery { height: 160px; }
             .modal-body { padding: 18px; }
             .modal-title { font-size: 1.3rem; }
@@ -550,9 +616,11 @@
         <button class="tab-btn active" onclick="switchTab('citiesTab', this)">🏢 城市心動比較</button>
         <button class="tab-btn" onclick="switchTab('nationalTab', this)">🌍 國家共通規範</button>
         <button class="tab-btn" onclick="switchTab('calendarTab', this)">🗓️ 行事曆與避雷指南</button>
-        <button class="tab-btn" onclick="switchTab('bangkokFlightTab', this)">✈️ 曼谷機票評估</button>
+        <button class="tab-btn" onclick="switchTab('bangkokFlightTab', this)">✈️ 曼谷機票評估 (請假≤2天)</button>
+        <button class="tab-btn" onclick="switchTab('priceComparisonTab', this)">📊 泰航 vs 華航結構化比價</button>
     </div>
 
+    <!-- TAB 1: 城市心動比較 -->
     <div id="citiesTab" class="tab-content active">
         <div class="cards-grid">
             
@@ -697,6 +765,7 @@
         </div>
     </div>
 
+    <!-- TAB 2: 國家共通規範 -->
     <div id="nationalTab" class="tab-content">
         <div style="overflow-x: auto; background: #ffffff; border-radius: 12px; border: 1px solid var(--card-border); padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
             <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; min-width: 700px;">
@@ -753,6 +822,7 @@
         </div>
     </div>
 
+    <!-- TAB 3: 行事曆與避雷指南 -->
     <div id="calendarTab" class="tab-content">
         <div class="section-sub-title">📊 跨國分軌甘特圖 (2026/09 - 2027/02)</div>
         <div class="gantt-container">
@@ -889,6 +959,7 @@
         </div>
     </div>
 
+    <!-- TAB 4: 曼谷機票評估 (請假≤2天) -->
     <div id="bangkokFlightTab" class="tab-content">
         <div class="flight-eval-container">
             <div class="flight-eval-header">
@@ -917,13 +988,40 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td><span class="plan-badge winner">🏆 終極 CP 晚回</span></td>
+                            <td><strong>10/30 (五) ～ 11/02 (一)</strong></td>
+                            <td>泰航去 ➔ 華航回</td>
+                            <td>4 天 3 夜</td>
+                            <td><b>1.5 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(五下+一)</span></td>
+                            <td><span class="price-num" style="color:#4f46e5;">NT$ 12,039</span></td>
+                            <td>泰去華回極致低價！最後一天玩到 18:20 晚班機</td>
+                        </tr>
+                        <tr>
                             <td><span class="plan-badge winner">🏆 CP 值之王</span></td>
+                            <td><strong>10/30 (五) ～ 11/02 (一)</strong></td>
+                            <td>泰航來回</td>
+                            <td>4 天 3 夜</td>
+                            <td><b>1.5 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(五下+一)</span></td>
+                            <td><span class="price-num lowest">NT$ 10,476</span></td>
+                            <td>破盤底價！避開 10/26 禁酒令且曼谷轉乾爽</td>
+                        </tr>
+                        <tr>
+                            <td><span class="plan-badge winner">🏆 涼季首選</span></td>
                             <td><strong>11/06 (五) ～ 11/09 (一)</strong></td>
                             <td>泰航來回</td>
                             <td>4 天 3 夜</td>
                             <td><b>1.5 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(五下+一)</span></td>
                             <td><span class="price-num lowest">NT$ 10,497</span></td>
                             <td>涼季乾爽無雨，傳統航空不到 10,500 元</td>
+                        </tr>
+                        <tr>
+                            <td><span class="plan-badge combo">🌟 混搭極致晚回</span></td>
+                            <td><strong>11/07 (六) ～ 11/10 (二)</strong></td>
+                            <td>泰航去 ➔ 華航回</td>
+                            <td>4 天 3 夜</td>
+                            <td><b>2 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(一、二)</span></td>
+                            <td><span class="price-num">NT$ 12,487</span></td>
+                            <td>週六出發不趕，最後一天搭 18:20 華航晚班機</td>
                         </tr>
                         <tr>
                             <td><span class="plan-badge holiday">⚡ 連假首選</span></td>
@@ -944,66 +1042,325 @@
                             <td>爽玩 5 天，最後一天 18:20 晚班機悠閒逛街</td>
                         </tr>
                         <tr>
-                            <td><span class="plan-badge holiday">⚡ 連假晚回</span></td>
-                            <td><strong>10/24 (六) ～ 10/27 (二)</strong></td>
-                            <td>泰航去 ➔ 華航回</td>
-                            <td>4 天 3 夜</td>
-                            <td><b style="color:var(--accent-orange);">1 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(10/27)</span></td>
-                            <td><span class="price-num">NT$ 14,817</span></td>
-                            <td>只請 1 天，第 4 天有完整白天玩到下午 3 點</td>
-                        </tr>
-                        <tr>
-                            <td><span class="plan-badge normal">🏃 週末快閃晚回</span></td>
-                            <td><strong>11/06 (五) ～ 11/08 (日)</strong></td>
-                            <td>泰航去 ➔ 華航回</td>
-                            <td>3 天 2 夜</td>
-                            <td><b>0.5 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(五下午)</span></td>
-                            <td><span class="price-num">NT$ 12,917</span></td>
-                            <td>僅請半天假，週日整天玩好玩滿搭晚班機</td>
-                        </tr>
-                        <tr>
-                            <td><span class="plan-badge normal">🏃 泰航快閃</span></td>
-                            <td><strong>11/06 (五) ～ 11/08 (日)</strong></td>
+                            <td><span class="plan-badge normal">🏃 極致省假快閃</span></td>
+                            <td><strong>10/30 (五) ～ 11/01 (日)</strong></td>
                             <td>泰航來回</td>
                             <td>3 天 2 夜</td>
                             <td><b>0.5 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(五下午)</span></td>
-                            <td><span class="price-num">NT$ 10,835</span></td>
-                            <td>請假最少，但週日中午 11:55 需搭機返國</td>
+                            <td><span class="price-num lowest">NT$ 10,476</span></td>
+                            <td>僅請半天假即可出國，但週日中午需搭機返國</td>
                         </tr>
                         <tr>
                             <td><span class="plan-badge normal">💼 華航全包</span></td>
-                            <td><strong>10/25 (日) ～ 10/28 (三)</strong></td>
+                            <td><strong>10/30 (五) ～ 11/02 (一)</strong></td>
                             <td>華航來回</td>
                             <td>4 天 3 夜</td>
-                            <td><b>2 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(10/27, 28)</span></td>
-                            <td><span class="price-num">NT$ 14,048</span></td>
-                            <td>華航午去晚回，完整玩滿 4 天</td>
-                        </tr>
-                        <tr>
-                            <td><span class="plan-badge combo">🌟 涼季混搭晚回</span></td>
-                            <td><strong>11/06 (五) ～ 11/09 (一)</strong></td>
-                            <td>泰航去 ➔ 華航回</td>
-                            <td>4 天 3 夜</td>
                             <td><b>1.5 天</b> <span style="font-size:0.75rem; color:var(--text-muted);">(五下+一)</span></td>
-                            <td><span class="price-num">NT$ 15,884</span></td>
-                            <td>涼季好天氣，搭配最後一天 18:20 晚班機</td>
+                            <td><span class="price-num">NT$ 14,463</span></td>
+                            <td>華航午去晚回，完整玩滿 4 天</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="decision-cards-grid">
+                <div class="decision-card purple-top">
+                    <h4 style="color:#4f46e5;">⭐ 終極推薦（10/30 泰去 ➔ 11/2 華回）</h4>
+                    <p><strong>總票價 NT$ 12,039：</strong>僅比泰航純來回多 $1,563，直接買到最後一天 18:20 晚班機，避開 10/26 禁酒令且進涼季！</p>
+                </div>
                 <div class="decision-card green-top">
-                    <h4 style="color:#15803d;">💰 最省錢 × 氣候最佳</h4>
-                    <p><strong>11/6 ~ 11/9 泰航來回（$10,497）：</strong>僅請 1.5 天假，進入曼谷乾爽涼季，無雨不悶熱，預算花費最低。</p>
+                    <h4 style="color:#15803d;">💰 泰航破盤底價（10/30 ~ 11/2 來回）</h4>
+                    <p><strong>最低票價 NT$ 10,476：</strong>傳統航空最便宜底價，請 1.5 天爽玩 4 天 3 夜，曼谷夜市與 SPA 逛好逛滿。</p>
                 </div>
                 <div class="decision-card orange-top">
-                    <h4 style="color:#ea580c;">⚡ 請假最少（連假紅利）</h4>
-                    <p><strong>10/24 ~ 10/27 泰航來回（$12,196）：</strong>只需請 1 天週二假即可爽玩 4 天 3 夜，週六出發不趕時間。</p>
+                    <h4 style="color:#ea580c;">⚡ 週末出發不趕（11/7 泰去 ➔ 11/10 華回）</h4>
+                    <p><strong>總票價 NT$ 12,487：</strong>週六 17:15 輕鬆出發，第 4 天有完整白天玩到下午 3 點再前往機場。</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 5: 泰航 vs 華航結構化比價 (完整收錄 3 大時段) -->
+    <div id="priceComparisonTab" class="tab-content">
+        <div class="flight-eval-container">
+            <div class="flight-eval-header">
+                <div>
+                    <h2 style="font-size:1.4rem; color:#0369a1; margin-bottom:4px; font-weight:700;">📊 泰航 (TG) vs 華航 (CI) 結構化單程比價矩陣</h2>
+                    <p style="font-size:0.88rem; color:var(--text-muted);">橫向交叉比對 10 月中下旬、10 月底跨 11 月、11 月初所有自查單程票價數據</p>
+                </div>
+                <div class="timing-pills">
+                    <div class="timing-pill"><strong>TG (泰航)：</strong> 去 17:15 ➔ 19:55 / 回 11:55 ➔ 16:15</div>
+                    <div class="timing-pill"><strong>CI (華航)：</strong> 去 14:40 ➔ 17:20 / 回 18:20 ➔ 22:50</div>
+                </div>
+            </div>
+
+            <div class="price-matrix-grid-3col">
+                
+                <!-- 1. 10月底跨11月矩陣 (NEW 最便宜) -->
+                <div class="matrix-box" style="border: 2px solid #38bdf8;">
+                    <div class="matrix-title">
+                        <span>🗓️ 10/29 ～ 11/3（跨月波段）</span>
+                        <span style="font-size:0.75rem; background:var(--accent-green-bg); color:var(--accent-green); padding:2px 8px; border-radius:4px; font-weight:bold;">👑 全場最平價</span>
+                    </div>
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>泰航去 (TG)</th>
+                                <th>泰航回 (TG)</th>
+                                <th>華航去 (CI)</th>
+                                <th>華航回 (CI)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>10/29 (四)</b></td>
+                                <td style="color:#15803d; font-weight:bold;">$4,947</td>
+                                <td>—</td>
+                                <td>$7,371</td>
+                                <td>—</td>
+                            </tr>
+                            <tr style="background:#f0fdf4;">
+                                <td><b>10/30 (五)</b></td>
+                                <td style="color:#15803d; font-weight:bold;">$4,947</td>
+                                <td>—</td>
+                                <td>$7,371</td>
+                                <td>—</td>
+                            </tr>
+                            <tr style="background:#f0fdf4;">
+                                <td><b>10/31 (六)</b></td>
+                                <td style="color:#15803d; font-weight:bold;">$4,947</td>
+                                <td>—</td>
+                                <td style="color:#1d4ed8; font-weight:bold;">$6,511</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td><b>11/1 (日)</b></td>
+                                <td>—</td>
+                                <td style="color:#15803d; font-weight:bold;">$5,529</td>
+                                <td>—</td>
+                                <td>$7,952</td>
+                            </tr>
+                            <tr style="background:#eff6ff;">
+                                <td><b>11/2 (一)</b></td>
+                                <td>—</td>
+                                <td style="color:#15803d; font-weight:bold;">$5,529</td>
+                                <td>—</td>
+                                <td style="color:#1d4ed8; font-weight:bold;">$7,092</td>
+                            </tr>
+                            <tr>
+                                <td><b>11/3 (二)</b></td>
+                                <td>—</td>
+                                <td style="color:#15803d; font-weight:bold;">$5,529</td>
+                                <td>—</td>
+                                <td style="color:#b91c1c;">$9,852</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="combo-summary-box">
+                        <div class="combo-item">
+                            <span><b>10/30 去 ～ 11/2 回（泰去 ＋ 華回）</b></span>
+                            <span class="price-num" style="color:#4f46e5;">NT$ 12,039 ⭐</span>
+                        </div>
+                        <div class="combo-item">
+                            <span>10/30 去 ～ 11/2 回（泰航純來回）</span>
+                            <span class="price-num lowest">NT$ 10,476</span>
+                        </div>
+                        <div class="combo-item">
+                            <span>10/30 去 ～ 11/2 回（華航純來回）</span>
+                            <span class="price-num">NT$ 14,463</span>
+                        </div>
+                        <div class="combo-item">
+                            <span>10/31 去 ～ 11/2 回（華航純來回）</span>
+                            <span class="price-num">NT$ 13,603</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 11月出發矩陣 -->
+                <div class="matrix-box">
+                    <div class="matrix-title">
+                        <span>🗓️ 11/5 ～ 11/10（涼季波段）</span>
+                        <span style="font-size:0.75rem; background:var(--accent-green-bg); color:var(--accent-green); padding:2px 8px; border-radius:4px;">涼爽氣候</span>
+                    </div>
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>泰航去 (TG)</th>
+                                <th>泰航回 (TG)</th>
+                                <th>華航去 (CI)</th>
+                                <th>華航回 (CI)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>11/5 (四)</b></td>
+                                <td>$5,294</td>
+                                <td>—</td>
+                                <td>$9,277</td>
+                                <td>—</td>
+                            </tr>
+                            <tr style="background:#f0fdf4;">
+                                <td><b>11/6 (五)</b></td>
+                                <td style="color:#15803d; font-weight:bold;">$4,956</td>
+                                <td>—</td>
+                                <td>$7,377</td>
+                                <td>—</td>
+                            </tr>
+                            <tr style="background:#f0fdf4;">
+                                <td><b>11/7 (六)</b></td>
+                                <td style="color:#15803d; font-weight:bold;">$4,956</td>
+                                <td>—</td>
+                                <td>$9,277</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td><b>11/8 (日)</b></td>
+                                <td>—</td>
+                                <td>$5,879</td>
+                                <td>—</td>
+                                <td>$7,961</td>
+                            </tr>
+                            <tr>
+                                <td><b>11/9 (一)</b></td>
+                                <td>—</td>
+                                <td style="color:#15803d; font-weight:bold;">$5,541</td>
+                                <td>—</td>
+                                <td>$10,928</td>
+                            </tr>
+                            <tr style="background:#eff6ff;">
+                                <td><b>11/10 (二)</b></td>
+                                <td>—</td>
+                                <td style="color:#15803d; font-weight:bold;">$5,541</td>
+                                <td>—</td>
+                                <td style="color:#1d4ed8; font-weight:bold;">$7,531</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="combo-summary-box">
+                        <div class="combo-item">
+                            <span><b>11/7 去 ～ 11/10 回（泰去 ＋ 華回）</b></span>
+                            <span class="price-num" style="color:#4f46e5;">NT$ 12,487 ⭐</span>
+                        </div>
+                        <div class="combo-item">
+                            <span>11/7 去 ～ 11/10 回（泰航純來回）</span>
+                            <span class="price-num lowest">NT$ 10,497</span>
+                        </div>
+                        <div class="combo-item">
+                            <span>11/6 去 ～ 11/9 回（泰航純來回）</span>
+                            <span class="price-num lowest">NT$ 10,497</span>
+                        </div>
+                        <div class="combo-item">
+                            <span>11/7 去 ～ 11/10 回（華航純來回）</span>
+                            <span class="price-num" style="color:#b91c1c;">NT$ 16,808</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 10月中下旬矩陣 -->
+                <div class="matrix-box">
+                    <div class="matrix-title">
+                        <span>🗓️ 10/22 ～ 10/28（連假波段）</span>
+                        <span style="font-size:0.75rem; background:var(--accent-orange-bg); color:var(--accent-orange); padding:2px 8px; border-radius:4px;">連假紅利</span>
+                    </div>
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>泰航去 (TG)</th>
+                                <th>泰航回 (TG)</th>
+                                <th>華航去 (CI)</th>
+                                <th>華航回 (CI)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>10/22 (四)</b></td>
+                                <td>$6,656</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td><b>10/23 (五)</b></td>
+                                <td>$8,563</td>
+                                <td>—</td>
+                                <td>$10,344</td>
+                                <td>—</td>
+                            </tr>
+                            <tr style="background:#f0fdf4;">
+                                <td><b>10/24 (六)</b></td>
+                                <td style="color:#15803d; font-weight:bold;">$4,956</td>
+                                <td>—</td>
+                                <td>$10,344</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td><b>10/25 (日)</b></td>
+                                <td>—</td>
+                                <td>$5,541</td>
+                                <td>$6,517</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td><b>10/26 (一)</b></td>
+                                <td>—</td>
+                                <td>$9,733</td>
+                                <td>—</td>
+                                <td>$10,928</td>
+                            </tr>
+                            <tr>
+                                <td><b>10/27 (二)</b></td>
+                                <td>—</td>
+                                <td>$7,240</td>
+                                <td>—</td>
+                                <td>$9,861</td>
+                            </tr>
+                            <tr style="background:#eff6ff;">
+                                <td><b>10/28 (三)</b></td>
+                                <td>—</td>
+                                <td>$5,878</td>
+                                <td>—</td>
+                                <td style="color:#1d4ed8; font-weight:bold;">$7,531</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="combo-summary-box">
+                        <div class="combo-item">
+                            <span><b>10/24 去 ～ 10/28 回（泰去 ＋ 華回 5天）</b></span>
+                            <span class="price-num" style="color:#4f46e5;">NT$ 12,487</span>
+                        </div>
+                        <div class="combo-item">
+                            <span>10/24 去 ～ 10/27 回（泰航純來回）</span>
+                            <span class="price-num">NT$ 12,196</span>
+                        </div>
+                        <div class="combo-item">
+                            <span>10/24 去 ～ 10/28 回（泰航純來回）</span>
+                            <span class="price-num lowest">NT$ 10,834</span>
+                        </div>
+                        <div class="combo-item">
+                            <span>10/24 去 ～ 10/27 回（華航純來回）</span>
+                            <span class="price-num" style="color:#b91c1c;">NT$ 20,205</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 決策卡片 -->
+            <div class="decision-cards-grid">
                 <div class="decision-card purple-top">
-                    <h4 style="color:#4f46e5;">🛫 時間最大化（混搭晚回）</h4>
-                    <p><strong>10/24 ~ 10/28 泰去華回（$12,487）：</strong>請 2 天假玩足 5 天 4 夜，最後一天搭 18:20 班機最悠閒。</p>
+                    <h4 style="color:#4f46e5;">⭐ 全場最高性價比（10/30 泰去 ➔ 11/2 華回）</h4>
+                    <p><strong>總票價 NT$ 12,039：</strong>泰去（$4,947）＋ 華回（$7,092），僅比泰航純來回多花約 $1,563，直接買到第 4 天整整 6 小時白天遊玩時間與 18:20 晚班機，避開 10/26 禁酒令且比純華航省下 $2,424！</p>
+                </div>
+                <div class="decision-card green-top">
+                    <h4 style="color:#15803d;">💰 泰航最低價波段（10/29 ～ 11/3）</h4>
+                    <p><strong>來回總價 NT$ 10,476：</strong>去程任選 10/29~10/31（均為 $4,947）搭配回程 11/1~11/3（均為 $5,529），均可享有全檔期最低價。缺點為回程需搭 11:55 中午班機。</p>
+                </div>
+                <div class="decision-card orange-top">
+                    <h4 style="color:#ea580c;">⚠️ 混搭分開購票提醒</h4>
+                    <p>泰航與華航皆為傳統全服務航空，標準艙等<strong>均含 23kg 免費托運行李與機上餐飲</strong>。購票時需分別至泰航官網與華航官網訂票，英文姓名拼音務必與護照核對一致。</p>
                 </div>
             </div>
         </div>
@@ -1011,6 +1368,7 @@
 
 </div>
 
+<!-- MODAL POPUP -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
         <button class="modal-close-btn" onclick="forceCloseModal()">✕</button>
